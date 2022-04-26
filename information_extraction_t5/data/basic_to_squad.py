@@ -1,6 +1,7 @@
-import numpy.random as nr
+"""Convert a simple JSON dataset into SQuAD format."""
 from typing import Dict, List, Optional
 from transformers import T5Tokenizer
+import numpy.random as nr
 
 from information_extraction_t5.features.context import get_context
 from information_extraction_t5.features.questions.type_map import TYPENAME_TO_TYPE
@@ -9,7 +10,7 @@ from information_extraction_t5.features.preprocess import get_questions_for_chun
 WARNING_MISSING_TYPENAMES = []
 
 
-def get_question_answers(document: Dict[str, str], type_name: str,
+def get_question_answers(document: Dict[str, str],
                          questions: Optional[List[str]] = None,
                          qa_id: str = 'publicacoes.instancia',
                          choose_question: str = 'first'):
@@ -27,11 +28,12 @@ def get_question_answers(document: Dict[str, str], type_name: str,
     """
     if questions is None:
         questions = []
-    # consider only the type-names that belong to the current dataset
-    if type_name not in document.keys():
-        return []
-    if not isinstance(document[type_name], str):
-        return []
+
+    subanswer = document
+    qa_id_split = qa_id.split('.')
+
+    for type_name in qa_id_split[1:]:
+        subanswer = subanswer[type_name]
     
     # select questions
     if choose_question == 'first':
@@ -43,12 +45,12 @@ def get_question_answers(document: Dict[str, str], type_name: str,
         selected_questions = questions
 
     qas = []
-    answer = f"[{TYPENAME_TO_TYPE[type_name]}]: {document[type_name]}"
+    answer = f"[{TYPENAME_TO_TYPE[type_name]}]: {subanswer}"
     for question in selected_questions:
         answers = [ 
             {
                 "answer_start": -1,  # None,
-                "text": answer, 
+                "text": answer,
             }
         ]
         qa = {
@@ -61,7 +63,7 @@ def get_question_answers(document: Dict[str, str], type_name: str,
 
 
 def get_compound_question_answers(
-        document: Dict[str, str], type_name: str,
+        document: Dict[str, str],
         questions: Optional[List[str]] = None,
         qa_id: str = 'publicacoes.instancia_orgao_tipo',
         choose_question: str = 'first') -> List[Dict]:
@@ -87,6 +89,8 @@ def get_compound_question_answers(
         selected_questions = [questions[idx]]
     else:
         selected_questions = questions
+
+    type_name = qa_id.split('.')[1]
 
     all_type_names = get_questions_for_chunk(qa_id=qa_id, return_dict=True).copy()
     for tn in all_type_names.keys():
@@ -261,27 +265,22 @@ def get_document_data(document: Dict,
 
         # We will use only the fields listed in list_of_type_names
         for qa_id in list_of_type_names:
-            doc_type, type_name = qa_id.split('.', 1)
+            doc_type = qa_id.split('.')[0]
             if doc_type != document_type:
                 continue
 
             if qa_id in list_of_use_compound_question:
-                if type_name not in document.keys():
-                    qas = []
-                else:
-                    questions = get_questions_for_chunk(qa_id=qa_id, is_compound=True)
-                    qas = get_compound_question_answers(
-                        document,
-                        questions=questions,
-                        qa_id=qa_id,
-                        type_name=type_name,
-                        choose_question=choose_question)
+                questions = get_questions_for_chunk(qa_id=qa_id, is_compound=True)
+                qas = get_compound_question_answers(
+                    document,
+                    questions=questions,
+                    qa_id=qa_id,
+                    choose_question=choose_question)
             else:
                 questions = get_questions_for_chunk(qa_id=qa_id)
                 qas = get_question_answers(document,
                                         questions=questions,
                                         qa_id=qa_id,
-                                        type_name=type_name,
                                         choose_question=choose_question)
             
             paragraph_counter_qas += len(qas)
