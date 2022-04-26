@@ -1,0 +1,93 @@
+model_name_or_path: unicamp-dl/ptt5-base-portuguese-vocab 
+do_lower_case: false
+deepspeed: false
+
+# neptune
+neptune_project: ramon.pires/information-extraction-t5
+experiment_name: experiment01
+tags: [ptt5, compound]
+
+# optimizer
+optimizer: AdamW
+lr: 1e-4
+weight_decay: 1e-5
+
+# scheduler
+scheduler: StepLR
+t_0: 2
+t_mult: 2
+gamma: 0.1
+step_size: 20
+
+# preprocess dataset
+project: [
+  publicacoes,
+  ]
+raw_data_file: [
+  data/raw/juridico_pub_validadas_train.json,
+  ]
+raw_valid_data_file: [
+  null,
+  ]
+raw_test_data_file: [
+  data/raw/juridico_pub_validadas_test.json
+  ]
+train_file: data/processed/train-v0.1.json
+valid_file: data/processed/dev-v0.1.json
+test_file: data/processed/test-v0.1.json
+type_names: [
+  ## publicacoes:
+  publicacoes.tipoPublicacao,
+  publicacoes.instancia,
+  publicacoes.orgao,
+  # publicacoes.instancia_orgao_tipo,  # temporario: para testar compound qas
+  ]
+use_compound_question: [
+  # publicacoes.instancia_orgao_tipo,  # temporario: para testar compound qas
+  null,
+  ]
+return_raw_text: [
+  null,
+  ]
+
+train_force_qa: true
+train_choose_question: first
+valid_percent: 0.2
+context_content: windows_token
+window_overlap: 0.2
+max_windows: 3
+max_size: 2048
+max_seq_length: 512
+
+# dataset
+train_batch_size: 8
+val_batch_size: 8
+shuffle_train: true
+use_sentence_id: false
+negative_ratio: 2
+
+seed: 20210519
+num_workers: 6
+
+# inference
+num_beams: 5
+max_length: 200
+get_highestprob_answer: true
+split_compound_answers: true
+group_qas: true
+only_misprediction_outputs: true
+normalize_outputs: true
+use_cached_predictions: true
+
+# Trainer
+accelerator: auto
+devices: auto
+max_epochs: 26
+deterministic: true
+accumulate_grad_batches: 2
+amp_backend: native
+precision: 32
+gradient_clip_val: 1.0
+val_check_interval: 1.0
+check_val_every_n_epoch: 2
+limit_val_batches: 0.5
