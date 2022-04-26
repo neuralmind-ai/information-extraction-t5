@@ -1,37 +1,79 @@
-# Question Answering T5 for documents
+# Information Extraction using T5
 
-This library provides methods and requirements to train and test a 
-[T5 model](https://arxiv.org/pdf/1910.10683.pdf) for question answering of 
-*Matrículas*, *Certidões*, *Publicações* and *PAC*.
+This project provides a solution for training and validating seq2seq models for information extraction. The method can be applied for any text-only type of document, such as legal, registration, news, etc. The approach used here for IE is question answering.
 
-* The model questions are available [here](src/features/questions).
-
-* Follows the [DataScience Cookiecutter directory structure](https://drivendata.github.io/cookiecutter-data-science/).
+In contrast to typical approachs, this project ...
 
 
 # Installation
 
-Clone the repository and install its dependencies according to the usecase.
+Clone the repository and install by running:
         
-        # Training
-        pip install .[dev]
-        
-        # Deployment
-        pip install .[deploy]
-        
-        # Minimal (only used by the deploy container)
         pip install .
 
-# How to Train
+# Fine-tuning
 
 Configure the parameters in *params.yaml*. Preprocess the datasets by running:
 
-        python src/data/convert_dataset_to_squad.py -c params.yaml
+        python information_extraction_t5/data/convert_dataset_to_squad.py -c params.yaml
 
 Run the experiment:
 
-        python src/main.py -c params.yaml
+        python information_extraction_t5/main.py -c params.yaml
 
-For running with A100 gpu, install torch using:
+Note that, for now, only the dataset NM-Publications is available. To extend for new datasets, please consult the section xxx.
 
-	pip install -f https://download.pytorch.org/whl/torch_stable.html torch==1.8.1+cu111
+# Inference
+
+Just run:
+
+        python information_extraction_t5/predict.py -c params.yaml
+
+This will result in N output files. TODO: describe them...
+
+# Setting the hyperparameters
+
+Plase, run ```python information_extraction_t5/main.py --help``` to know all the the settings related to data pre-processing, training, inference and result post-processing.
+
+TODO: describe the arguments
+
+Main arguments to describe:
+- context_content
+- ...
+
+# Extending for new datasets
+
+blablabla
+
+TODO: Give a name to the dataset
+
+TODO: Describe how the format the dataset must be converted to.
+
+TODO: Present the basic_to_squad we develop for datasets without text markings (start, end position) and without canonical format.
+
+This code that converts basic dataset to squad format supports compound QAs, but does not support sentence-ids and canonical format. In or
+der to use those features for your own dataset, you must convert the data into squad format by your own.
+
+TODO: Describe the expected JSON format for basic_to_squad with an example. Show compound chunk.
+
+TODO: List train, validation, test. Mention the valid_percent (maybe this should be included in the section before).
+
+TODO: Describe how to set the questions and the type-map. Show the format of the question dictionary.
+
+* The model questions are available [here](information_extraction_t5/features/questions).
+
+
+# Cite as
+       
+```bibtex 
+@inproceedings{pires2022sequence,
+          title = {Sequence-to-Sequence Models for Extracting Information from Registration and Legal Documents},
+          author = {Pires, Ramon and de Souza, Fábio C. and Rosa, Guilherme and Lotufo, Roberto A. and Nogueira, Rodrigo},
+          publisher = {arXiv},
+          doi = {10.48550/ARXIV.2201.05658},
+          url = {https://arxiv.org/abs/2201.05658},
+          year = {2022},
+        }
+```
+
+        
