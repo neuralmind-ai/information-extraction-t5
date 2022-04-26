@@ -1,0 +1,25 @@
+{
+    "965": {
+        "etiqueta": "ID00123",
+        "agencia": "1234",
+        "conta_corrente": "0093-1234-0000103133931",
+        "cpf": "675.957.460-51",
+        "nome_completo": "MARCIO MACEDO SOUZA",
+        "n_doc_serie": "73258674",
+        "orgao_emissor": "SSP",
+        "data_emissao": "05/09/1988",
+        "data_nascimento": "05/05/1971",
+        "nome_mae": "MARIA ANTONIETA MACEDO",
+        "nome_pai": "JOABE SALVADOR SOUZA",
+        "endereco": {
+            "logradouro": "RUA PEDRO NOVAIS",
+            "numero": "78",
+            "complemento": "Apto 8",
+            "bairro": "AFOGADOS",
+            "cidade": "RECIFE",
+            "estado": "PE",
+            "cep": "56220-000"
+        },
+        "text": "Proposta de Abertura de Conta, Contrata\u00e7\u00e3o de Cr\u00e9dito e\nAdes\u00e3o a Produtos e Servi\u00e7os Banc\u00e1rios - Pessoa F\u00edsica\nID00123\nAg\u00eancia N\u00ba\n1234\nConta Corrente 0093-1234-0000103133931\nCondi\u00e7\u00e3o de Movimenta\u00e7\u00e3o da Conta X Individual\nAltera\u00e7\u00e3o cadastral\nAngariador (matr\u00edcula) L\n000685631\nDados B\u00e1sicos do Titular\nCPF\n675.957.460-51\nNome Completo MARCIO MACEDO SOUZA\nDocumento de Identifica\u00e7\u00e3o CNH CTPS Entidade de Classe Mercosul Passaporte\nProtocolo Refugiado\nRIC RNE\nCIE Guia de Acolhimento ao Menor Registro Nacional Migrat\u00f3rio\nN\u00b0 Documento / N\u00b0 da S\u00e9rie (CTPS)\n73258674 \u00d3rg\u00e3o Emissor SSP\nUF PE\nData de Emiss\u00e3o 05/09/1988 Data de Vcto (passaporte/CNH)\n | Data de Nascimento 05/05/1971 Sexo F X M\nNacionalidade x Brasileira\nNome da M\u00e3e MARIA ANTONIETA MACEDO\nNome do Pai JOABE SALVADOR SOUZA\nCidadania\nBRASILEIRA\nDomic\u00edlio fiscal\nBRASIL\nEndere\u00e7os\nEndere\u00e7o Residencial\nRua/Av/P\u00e7a/Estrada RUA PEDRO NOVAIS\nN\u00famero\n78 Complemento Apto 8\nBairro AFOGADOS\nMunic\u00edpio RECIFE\nUF PE\nPa\u00eds BRASIL\n56220-000"
+    }
+}
