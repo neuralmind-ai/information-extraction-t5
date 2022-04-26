@@ -21,30 +21,36 @@ step_size: 20
 
 # preprocess dataset
 project: [
-  publicacoes,
+  form,
   ]
 raw_data_file: [
-  data/raw/juridico_pub_validadas_train.json,
+  data/raw/sample_train.json
   ]
 raw_valid_data_file: [
   null,
   ]
 raw_test_data_file: [
-  data/raw/juridico_pub_validadas_test.json
+  data/raw/sample_test.json
   ]
 train_file: data/processed/train-v0.1.json
 valid_file: data/processed/dev-v0.1.json
 test_file: data/processed/test-v0.1.json
 type_names: [
-  ## publicacoes:
-  publicacoes.tipoPublicacao,
-  publicacoes.instancia,
-  publicacoes.orgao,
-  # publicacoes.instancia_orgao_tipo,  # temporario: para testar compound qas
+  form.etiqueta,
+  form.agencia,
+  form.conta_corrente,
+  form.cpf,
+  form.nome_completo,
+  form.n_doc_serie,
+  form.orgao_emissor,
+  form.data_emissao,
+  form.data_nascimento,
+  form.nome_mae,
+  form.nome_pai,
+  form.endereco,
   ]
 use_compound_question: [
-  # publicacoes.instancia_orgao_tipo,  # temporario: para testar compound qas
-  null,
+  form.endereco,
   ]
 return_raw_text: [
   null,

@@ -20,35 +20,75 @@ QUESTION_DICT = Dict[QUESTION_NAME, Union[SUBQUESTION_DICT, List[QUESTION]]]
 
 COMPLEMENT = ' e como aparece no texto?'  # or 'and how does it appear in the text?' for EN
 
-_QUESTIONS_PUBLICACAO = {
-    'instancia':            [
-        'Qual é a instância?',
-        'A qual instância pertence a publicação?',
-        'Qual é a instância responsável pela publicação?',
+_QUESTIONS_FORM = {
+    'etiqueta':             [
+        'Qual é o número da etiqueta?',
     ],
-    'orgao':                [
-        'Qual é o órgão?',
-        'A qual órgão pertence a publicação?',
-        'Qual é a órgão associado à publicação?',
+    'agencia':              [
+        'Qual é o número da agência?',
     ],
-    'tipoPublicacao':       [
-        'Qual é o tipo?',
-        'A publicação é de qual tipo?',
-        'Qual é o tipo de publicação do documento?',
+    'conta_corrente':       [
+        'Qual é o número da conta corrente?',
     ],
-    'instancia_orgao_tipo': OrderedDict({
+    'cpf':                  [
+        'Qual é o CPF/CNPJ?',
+        'Qual é o CPF do titular?',
+    ],
+    'nome_completo':        [
+        'Qual é o nome?',
+        'Qual é o nome completo?',
+    ],
+    'n_doc_serie':          [
+        'Qual é o número do documento ou número da série?',
+    ],
+    'orgao_emissor':        [
+        'Qual é o órgão emissor?',
+    ],
+    'doc_id_uf':            [
+        'Qual é o estado do documento de identificação?',
+        'Qual é a UF do documento de identificação?',
+    ],
+    'data_emissao':         [
+        'Qual é a data de emissão?',
+    ],
+    'data_nascimento':      [
+        'Qual é a data de nascimento?',
+    ],
+    'nome_mae':             [
+        'Qual é o nome da mãe?',
+    ],
+    'nome_pai':             [
+        'Qual é o nome do pai?',
+    ],
+    'endereco': OrderedDict({
         'compound':         [
-            'Quais são as informações essenciais da publicação?',
-            'Quais são a instância, o órgão e o tipo da publicação?',
-            'Quais são as principais informações do documento de publicação?',
+            'Qual o endereço?',
         ],
-        'instancia':        [],
-        'orgao':            [],
-        'tipoPublicacao':   [],
-        }),
+        'logradouro':       [
+            'Qual é o logradouro?',
+        ],
+        'numero':           [
+            'Qual é o número?',
+        ],
+        'complemento':      [
+            'Qual é o complemento?',
+        ],
+        'bairro':           [
+            'Qual é o bairro?',
+        ],
+        'cidade':           [
+            'Qual é a cidade?',
+        ],
+        'estado':           [
+            'Qual é o estado?',
+        ],
+        'cep':              [
+            'Qual é o CEP?',
+        ]
+    }),
 }
 
 # Include here other pairs (project, questions dict) for new datasets
 QUESTIONS = {
-    'publicacoes': _QUESTIONS_PUBLICACAO,
+    'form': _QUESTIONS_FORM,
 }

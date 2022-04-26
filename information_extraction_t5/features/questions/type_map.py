@@ -13,16 +13,32 @@ COMPLEMENT_TYPE = 'aparece no texto'  # or 'appears in the text' for EN
 # Create a _NEWDATASET_TYPENAME_TO_TYPE for each new dataset, and
 # update the TYPENAME_TO_TYPE dict.
 
-_PUBLICACAO_TYPENAME_TO_TYPE = {
-    "instancia":                    "Instância",
-    "orgao":                        "Órgão",
-    "tipoPublicacao":               "Tipo"
+_FORM_TYPENAME_TO_TYPE = {
+    "etiqueta":                  "Etiqueta",
+    "agencia":                   "Agência",
+    "conta_corrente":            "Conta Corrente",
+    "cpf":                       "CPF/CNPJ",
+    "nome_completo":             "Nome",
+    "n_doc_serie":               "No do Documento",
+    "orgao_emissor":             "Órgão Emissor",
+    "data_emissao":              "Data de Emissão",
+    "data_nascimento":           "Data de Nascimento",
+    "nome_mae":                  "Nome da Mãe",
+    "nome_pai":                  "Nome do Pai",
+    "endereco":                  "Endereço",
+    "logradouro":                "Logradouro",
+    "numero":                    "Número",
+    "complemento":               "Complemento",
+    "bairro":                    "Bairro",
+    "cidade":                    "Cidade",
+    "estado":                    "Estado",
+    "cep":                       "CEP"
 }
 
 TYPENAME_TO_TYPE = {
     COMPLEMENT_TYPE: COMPLEMENT_TYPE,
 }
-TYPENAME_TO_TYPE.update(_PUBLICACAO_TYPENAME_TO_TYPE)
+TYPENAME_TO_TYPE.update(_FORM_TYPENAME_TO_TYPE)
 # TYPENAME_TO_TYPE.update(_NEWDATASET_TYPENAME_TO_TYPE)
 
 # This dict is used to recover the type-name by using the type. It is not
