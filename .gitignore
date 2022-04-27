@@ -55,6 +55,6 @@ MANIFEST
 
 cache*
 
-data/*
+data/processed
 
 lightning_logs/*
