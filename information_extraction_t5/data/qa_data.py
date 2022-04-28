@@ -1,11 +1,12 @@
+"""Implement DataModule"""
 import os
-import configargparse
 from typing import Optional
+import configargparse
 
 import torch
 from torch.utils.data import DataLoader, Dataset
 import pytorch_lightning as pl
-from transformers.data.processors.squad import SquadV1Processor, SquadV2Processor
+from transformers.data.processors.squad import SquadV1Processor
 
 from information_extraction_t5.data.convert_squad_to_t5 import squad_convert_examples_to_t5_format
 
@@ -23,19 +24,16 @@ class QADataModule(pl.LightningDataModule):
             # Load data examples from cache or dataset file
             cached_examples_train_file = os.path.join(
                 input_dir,
-                "cached_train_{}".format(
-                    list(filter(None, self.hparams.model_name_or_path.split("/"))).pop()
-                )
+                f"cached_train_{list(filter(None, self.hparams.model_name_or_path.split('/'))).pop()}"
             )
             cached_examples_valid_file = os.path.join(
                 input_dir,
-                "cached_valid_{}".format(
-                    list(filter(None, self.hparams.model_name_or_path.split("/"))).pop()
-                )
+                f"cached_valid_{list(filter(None, self.hparams.model_name_or_path.split('/'))).pop()}"
             )
 
             # Init examples and dataset from cache if it exists
-            if os.path.exists(cached_examples_train_file) and os.path.exists(cached_examples_valid_file) and not self.hparams.overwrite_cache:
+            if os.path.exists(cached_examples_train_file) and \
+                os.path.exists(cached_examples_valid_file) and not self.hparams.overwrite_cache:
                 print("Loading examples from cached files %s and %s" % (cached_examples_train_file, cached_examples_valid_file))
 
                 examples_and_dataset = torch.load(cached_examples_train_file)
@@ -45,28 +43,15 @@ class QADataModule(pl.LightningDataModule):
             else:
                 print("Creating examples from dataset file at %s" % input_dir)
 
-                if not self.hparams.data_dir and (not self.hparams.valid_file or not self.hparams.train_file):
-                    try:
-                        import tensorflow_datasets as tfds
-                    except ImportError:
-                        raise ImportError("If not data_dir is specified, tensorflow_datasets needs to be installed.")
-
-                    if self.hparams.version_2_with_negative:
-                        print("tensorflow_datasets does not handle version 2 of SQuAD.")
-
-                    tfds_examples = tfds.load("squad")
-                    processor = SquadV1Processor()
-
-                    # ignoring train mode to keep char position instead of token position
-                    # examples_train = processor.get_examples_from_dataset(tfds_examples, evaluate=False)
-                    examples_train = processor.get_examples_from_dataset(tfds_examples, evaluate=True)
-                    examples_valid = processor.get_examples_from_dataset(tfds_examples, evaluate=True)
-                else:
-                    processor = SquadV2Processor() if self.hparams.version_2_with_negative else SquadV1Processor()
-                    
-                    # examples_train = processor.get_train_examples(self.hparams.data_dir, filename=self.hparams.train_file)
-                    examples_train = processor.get_dev_examples(self.hparams.data_dir, filename=self.hparams.train_file)
-                    examples_valid = processor.get_dev_examples(self.hparams.data_dir, filename=self.hparams.valid_file)
+                processor = SquadV1Processor()
+                
+                # examples_train = processor.get_train_examples(self.hparams.data_dir, filename=self.hparams.train_file)
+                examples_train = processor.get_dev_examples(
+                    self.hparams.data_dir, filename=self.hparams.train_file
+                )
+                examples_valid = processor.get_dev_examples(
+                    self.hparams.data_dir, filename=self.hparams.valid_file
+                )
                         
                 _, _, self.train_dataset = squad_convert_examples_to_t5_format(
                     examples=examples_train,
@@ -83,9 +68,9 @@ class QADataModule(pl.LightningDataModule):
                     return_dataset=True,
                 )
 
-                print("Saving examples into cached file %s" % cached_examples_train_file)
+                print(f"Saving examples into cached file {cached_examples_train_file}")
                 torch.save({"dataset": self.train_dataset}, cached_examples_train_file)
-                print("Saving examples into cached file %s" % cached_examples_valid_file)
+                print(f"Saving examples into cached file {cached_examples_valid_file}")
                 torch.save({"dataset": self.valid_dataset}, cached_examples_valid_file)
             
             print(f'>> train-dataset: {len(self.train_dataset)} samples')
@@ -98,9 +83,7 @@ class QADataModule(pl.LightningDataModule):
 
             cached_examples_test_file = os.path.join(
                 input_dir,
-                "cached_test_{}".format(
-                    list(filter(None, self.hparams.model_name_or_path.split("/"))).pop()
-                )
+                f"cached_test_{list(filter(None, self.hparams.model_name_or_path.split('/'))).pop()}"
             )
 
             # Init examples and dataset from cache if it exists
@@ -113,7 +96,7 @@ class QADataModule(pl.LightningDataModule):
             else:
                 print("Creating examples from dataset file at %s" % input_dir)
 
-                processor = SquadV2Processor() if self.hparams.version_2_with_negative else SquadV1Processor()
+                processor = SquadV1Processor()
 
                 examples_test = processor.get_dev_examples(self.hparams.data_dir, filename=self.hparams.test_file)
 
@@ -189,17 +172,18 @@ class QADataModule(pl.LightningDataModule):
             type=str,
             help="The input test file. If a data dir is specified, will look for the file there"
         )
-        parser.add_argument(
-            "--version_2_with_negative",
-            action="store_true",
-            help="If true, the SQuAD examples contain some that do not have an answer.",
-        )
-        parser.add_argument("--train_batch_size", default=8, type=int, help="Batch size per GPU/CPU for training.")
-        parser.add_argument("--val_batch_size", default=8, type=int, help="Batch size per GPU/CPU for evaluation.")
-        parser.add_argument("--shuffle_train", action="store_true", help="Shuffle the train dataset")
-        parser.add_argument("--negative_ratio", default=0, type=int, help="Set the positive-negative ratio of the training dataset. "
+        parser.add_argument("--train_batch_size", default=8, type=int,
+            help="Batch size per GPU/CPU for training.")
+        parser.add_argument("--val_batch_size", default=8, type=int, 
+            help="Batch size per GPU/CPU for evaluation.")
+        parser.add_argument("--shuffle_train", action="store_true", 
+            help="Shuffle the train dataset")
+        parser.add_argument("--negative_ratio", default=0, type=int,
+            help="Set the positive-negative ratio of the training dataset. "
             "Data balancing is performed for each pair document-typename. If less than one, keep the ratio of the original dataset")
-        parser.add_argument("--use_sentence_id", action="store_true", help="Set this flag if you are using the approach that breaks the contexts into sentences")
-        parser.add_argument("--overwrite_cache", action="store_true", help="Overwrite the cached training and evaluation sets")
+        parser.add_argument("--use_sentence_id", action="store_true",
+            help="Set this flag if you are using the approach that breaks the contexts into sentences")
+        parser.add_argument("--overwrite_cache", action="store_true",
+            help="Overwrite the cached training and evaluation sets")
         
         return parser
