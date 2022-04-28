@@ -3,6 +3,7 @@ do_lower_case: false
 deepspeed: false
 
 # neptune
+neptune: false
 neptune_project: ramon.pires/information-extraction-t5
 experiment_name: experiment01
 tags: [ptt5, compound]
@@ -11,13 +12,6 @@ tags: [ptt5, compound]
 optimizer: AdamW
 lr: 1e-4
 weight_decay: 1e-5
-
-# scheduler
-scheduler: StepLR
-t_0: 2
-t_mult: 2
-gamma: 0.1
-step_size: 20
 
 # preprocess dataset
 project: [
@@ -70,19 +64,19 @@ train_batch_size: 8
 val_batch_size: 8
 shuffle_train: true
 use_sentence_id: false
-negative_ratio: 2
+negative_ratio: -1
 
 seed: 20210519
 num_workers: 6
 
-# inference
+# inference and post-processing
 num_beams: 5
 max_length: 200
 get_highestprob_answer: true
 split_compound_answers: true
 group_qas: true
-only_misprediction_outputs: true
 normalize_outputs: true
+only_misprediction_outputs: true
 use_cached_predictions: true
 
 # Trainer
