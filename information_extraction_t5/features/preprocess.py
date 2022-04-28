@@ -100,7 +100,7 @@ def _get_id_based_on_linebreaks(context: str, answer_position: int) -> int:
 def get_questions_for_chunk(
         qa_id: str = 'matriculas.imovel.comarca', is_compound: bool = False,
         return_dict: bool = False, all_questions: QUESTION_DICT = ALL_QUESTIONS
-        ) -> Union[List[QUESTION], QUESTION_DICT, SUBQUESTION_DICT]:
+) -> Union[List[QUESTION], QUESTION_DICT, SUBQUESTION_DICT]:
     """Returns a list of questions for a specific qa_id, or a dict mapping 
     typenames to question for building compound answers. The function can 
     return also all the questions.
@@ -145,8 +145,11 @@ def get_questions_for_chunk(
     return questions
 
 
-def get_qa_ids_recursively(dict_or_list, base_qa_id, list_of_use_compound_question, 
-    list_of_compound_chunks_to_ignore, list_of_subchunks_to_skip, qa_ids_list=[]):
+def get_qa_ids_recursively(
+        dict_or_list, base_qa_id, list_of_use_compound_question,
+        list_of_compound_chunks_to_ignore, list_of_subchunks_to_skip, 
+        qa_ids_list=[]
+) -> List[str]:
     """Auxiliar function to get recursively all the possible qa_ids"""
 
     if isinstance(dict_or_list, List) and not base_qa_id.endswith('compound'):
@@ -177,7 +180,7 @@ def get_all_qa_ids(
         list_subchunks_to_complement_siblings: List[str] = [], 
         list_of_subchunks_to_skip: List[str] = [],
         all_questions: QUESTION_DICT = ALL_QUESTIONS
-        ) -> List[str]:
+) -> List[str]:
     """Returns a list of all possible qa_ids that will be used to force 
     the qa, even if the chunk does not exist.
 
@@ -244,20 +247,6 @@ def complement_questions_to_require_rawdata(
         questions = questions.replace('?', complement)
     if isinstance(questions, list):  # list of questions
         questions = [q.replace('?', complement) for q in questions]
-    return questions
-    
-
-def complement_questions_with_information(
-        questions: Union[QUESTION, List[QUESTION]], complement: List[str] = []
-) -> Union[QUESTION, List[QUESTION]]:
-    """Add complementary information to a specific question or questions.
-
-    This is used to build specific questions.
-    """
-    if isinstance(questions, str):  # simple question
-        questions = questions.format(*complement)
-    if isinstance(questions, list):  # list of questions
-        questions = [q.format(*complement) for q in questions]
     return questions
 
 
