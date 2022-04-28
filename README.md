@@ -2,12 +2,11 @@
 
  [![arXiv](https://img.shields.io/badge/arXiv-2101.05658-f9f107.svg)](https://arxiv.org/abs/2201.05658)
 
-This project provides a solution for training and validating seq2seq models for information extraction. The method can be applied for any text-only type of document, such as legal, registration, news, etc. The approach used here for IE is question answering.
+This project provides a solution for training and validating seq2seq models for information extraction. The method can be applied for any text-only type of document, such as legal, registration, news, etc. The project extracts information by question answering.
 
-In contrast to typical approachs, this project ... *some more information here*
+In this work, we evaluate sequence-to-sequence models as an alternative to token-level classification methods to extract information from documents. T5 models are finetuned to jointly extract the information and generate the output in a structured format. Post-processing steps are learned during training, eliminating the need for rule-based methods and simplifying the pipeline.
 
-Neither the models weights nor the datasets are available for ethical issues. But we make efforts to release the source code that can beeasily adapted for new datasets and accepts different models of T5 family.
-
+Neither the models weights nor the datasets are available for ethical issues. But we make efforts to release the source code that works for different models of T5 family, and can be easily extended for new datasets and different languages.
 
 # Installation
 
@@ -25,40 +24,45 @@ Configure the parameters in `params.yaml`. Preprocess the datasets by running:
 python information_extraction_t5/data/convert_dataset_to_squad.py -c params.yaml
 ```
 
-Run the experiment:
+Start the fine-tuning experiment:
 
 ```bash
-python information_extraction_t5/main.py -c params.yaml
+python information_extraction_t5/train.py -c params.yaml
 ```
 
 Note that, for now, only one [tiny synthetic dataset](data/raw/sample_train.json) is available. To extend for new datasets, please consult [this section](#extending-for-new-datasets).
 
 # Inference
 
-Just run:
+For running inference, just execute:
 
 ```bash
 python information_extraction_t5/predict.py -c params.yaml
 ```
 
-This will result in N output files.
+After finising the prediction, some metrics and post-processed outputs files will be generated:
 
-*Talk about post-processing or give a link if we consider necessary to describe this.*
+- `metrics_by_typenames.json`: JSON file with exact matching and F1-score for each *field*, each dataset and all the documents.
+- `metrics_by_documents.json`: JSON file with exact matching and F1-score for each *document*, each dataset and all the documents.
+- `outputs_by_typenames.txt`: TXT file with labels, predictions, *document id*, probability of selected window, and window id, grouped by *fields*.
+- `outputs_by_documents.txt`: TXT file with labels, predictions, *field id*, probability of selected window, and window id, grouped by *documents*.
+- `output_sheet.xlsl`: Excel file with field id, labels, predictions and probs grouped by documents.
+- `output_sheet_client.xlsl`: Excel file with labels, predictions, probs and metrics grouped by dataset.
 
 # Setting the hyperparameters
 
-To be aware of the settings related to data pre-processing, training, inference and pos-processing stages, please run:
+To know all the settings related to pre-processing, training, inference and pos-processing stages, please run:
 
 ```bash
-python information_extraction_t5/main.py --help
+python information_extraction_t5/train.py --help
 ```
-*coming soon*
 
-<!-- TODO: describe the arguments -->
-<!--  -->
+You will find an extensive list of parameters because it is inheriting Pytorch-Lightning's Trainer arguments.
+Give special attention only to the parameters that are in the `params.yaml` file.
+
+<!-- TODO: describe the most import arguments -->
 <!-- Main arguments to describe: -->
 <!-- - context_content -->
-<!-- - ... -->
 
 # Extending for new datasets
 
@@ -73,9 +77,9 @@ There are two preliminar steps when extending the project for new datasets.
 
 The original field names of the datasets can be noisy, not natural. One important step is converting those irregular names into natural ones. The natural names will be used as clues in the answers.
 
-For each dataset, it is necessary to map field names (we call it as type-name in the code) to types and vice-versa. The types are used as clues in brackets in T5 outputs. The field names are recovered in post-processing stage.
+For each dataset, it is necessary to [map](information_extraction_t5/features/questions/type_map.py) field names (we call it as type-name in the code) to types and vice-versa. The types are used as clues in brackets in T5 outputs. The field names are recovered in post-processing stage.
 
-Each dataset has it own `TYPENAME_TO_TYPE` dictionary. We strongly recommend that the types used in all the projects be consistent, and as generic as possible. For example, using `CPF/CNPJ` for all CPFs and CNPJs, regardless of being a consultant, current account holder, business partner, land owner, etc.
+Each dataset has it own `TYPENAME_TO_TYPE` dictionary. We strongly recommend that the types used in all the projects be consistent, and as generic as possible. For example, using *CPF/CNPJ* for all CPFs and CNPJs, regardless of being a consultant, current account holder, business partner, land owner, etc.
 
 ### Formulating questions *[Optional]*
 
@@ -172,13 +176,6 @@ test_file: data/processed/test-v0.1.json
 
 Note that it's possible to include several datasets in the list of projects, but each `{train, valid, test}_file` includes the examples of all the datasets listed in `project`.
 
-<!-- ## Garbage to use later -->
-<!-- The n-th element each list corresponds to the same dataset. -->
-<!--  -->
-<!-- The parameters names are intuitive.  -->
-<!--  -->
-<!-- about id: in which the dataset is referenced in the *id* as *dataset_1.name*, *dataset_2.date*, *dataset_2.tag*, for example.  -->
-
 ## Converting the dataset to SQuAD format
 
 If your dataset is not in the complex SQuAD-like format with the document divided into sliding windows, the pairs of question-answers, the correct qa-id, don't worry! We are releasing a code to [convert the dataset to the expected format](information_extraction_t5/data/basic_to_squad.py).
@@ -230,23 +227,6 @@ A: [State]: São Paulo
 Q: What is the state and how does it appear in the text?
 A: [State]: SP [appears in the text]: São Paulo
 ```
-
-<!-- TODO: Give a name to the dataset -->
-<!--  -->
-<!-- TODO: Describe how the format the dataset must be converted to. -->
-<!--  -->
-<!-- TODO: Present the basic_to_squad we develop for datasets without text markings (start, end position) and without canonical format. -->
-<!--  -->
-<!-- This code that converts basic dataset to squad format supports compound QAs, but does not support sentence-ids and canonical format. In or -->
-<!-- der to use those features for your own dataset, you must convert the data into squad format by your own. -->
-<!--  -->
-<!-- TODO: Describe the expected JSON format for basic_to_squad with an example. Show compound chunk. -->
-<!--  -->
-<!-- TODO: List train, validation, test. Mention the valid_percent (maybe this should be included in the section before). -->
-<!--  -->
-<!-- TODO: Describe how to set the questions and the type-map. Show the format of the question dictionary. -->
-<!--  -->
-<!-- * The model questions are available [here](information_extraction_t5/features/questions). -->
 
 # Cite as
        
