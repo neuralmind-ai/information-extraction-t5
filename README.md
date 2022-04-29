@@ -1,6 +1,6 @@
 # Information Extraction using T5
 
- [![arXiv](https://img.shields.io/badge/arXiv-2101.05658-f9f107.svg)](https://arxiv.org/abs/2201.05658)
+[![arXiv](https://img.shields.io/badge/arXiv-2101.05658-f9f107.svg)](https://arxiv.org/abs/2201.05658)
 
 This project provides a solution for training and validating seq2seq models for information extraction. The method can be applied for any text-only type of document, such as legal, registration, news, etc. The project extracts information by question answering.
 
@@ -10,7 +10,7 @@ Neither the models weights nor the datasets are available for ethical issues. Bu
 
 # Installation
 
-Clone the repository and install by running:
+Clone the repository and install via:
 
 ```bash
 pip install .
@@ -18,36 +18,43 @@ pip install .
 
 # Fine-tuning
 
-Configure the parameters in `params.yaml`. Preprocess the datasets by running:
+Configure the parameters in `params.yaml`. Then, preprocess the datasets by running:
 
 ```bash
 python information_extraction_t5/data/convert_dataset_to_squad.py -c params.yaml
 ```
 
-Start the fine-tuning experiment:
+Start the fine-tuning experiment via:
 
 ```bash
 python information_extraction_t5/train.py -c params.yaml
 ```
 
-Note that, for now, only one [tiny synthetic dataset](data/raw/sample_train.json) is available. To extend for new datasets, please consult [this section](#extending-for-new-datasets).
+The code executes both the training and inference using the checkpoint with best exact matching over the validation set, as well as the complete post-processing that involves especially:
 
-# Inference
+- selecting the most likely answer (the sliding window that provided the highest-probability response), and
+- breaking compound answers in clean and individual sub-answers.
 
-For running inference, just execute:
-
-```bash
-python information_extraction_t5/predict.py -c params.yaml
-```
-
-After finising the prediction, some metrics and post-processed outputs files will be generated:
+It also computes metrics and generates the following output files:
 
 - `metrics_by_typenames.json`: JSON file with exact matching and F1-score for each *field*, each dataset and all the documents.
 - `metrics_by_documents.json`: JSON file with exact matching and F1-score for each *document*, each dataset and all the documents.
 - `outputs_by_typenames.txt`: TXT file with labels, predictions, *document id*, probability of selected window, and window id, grouped by *fields*.
 - `outputs_by_documents.txt`: TXT file with labels, predictions, *field id*, probability of selected window, and window id, grouped by *documents*.
 - `output_sheet.xlsl`: Excel file with field id, labels, predictions and probs grouped by documents.
-- `output_sheet_client.xlsl`: Excel file with labels, predictions, probs and metrics grouped by dataset.
+- `output_sheet_client.xlsl`: Excel file with labels, predictions, probs and metrics, organized as one sheet for each dataset.
+
+Note that, for now, only a [tiny synthetic dataset](data/raw/sample_train.json) is available. To extend for new datasets, please consult [this section](#extending-for-new-datasets).
+
+# Inference
+
+Assuming you have finished the training and inference and want to use a different testing dataset, an intermediary checkpoint or even explore a different post-processing function or parameter, just run:
+
+```bash
+python information_extraction_t5/predict.py -c params.yaml
+```
+
+For cases that require a new inference round, remember to set `use_cache_predictions: false` to overwrite the cache. Otherwise, if you intend to rerun the post-processing, set `use_cache_predictions: true`.
 
 # Setting the hyperparameters
 
